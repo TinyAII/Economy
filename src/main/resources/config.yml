@@ -1,0 +1,28 @@
+# Economy 全局配置
+settings:
+  # 新玩家初始余额
+  starting-balance: 100.0
+  # 货币名称（显示用）
+  currency-name: "金币"
+  # 余额上限（-1 = 不封顶）
+  max-balance: -1
+  # 排行每页人数
+  top-page-size: 10
+  # 转账手续费率（0 = 免费，0.05 = 5%）
+  transfer-fee-rate: 0.0
+
+messages:
+  prefix: "&7[&6钱包&7] &r"
+  no-permission: "&c你没有权限这么做。"
+  player-not-found: "&c玩家 &e{player} &c不存在（从未进服）。"
+  invalid-amount: "&c金额无效，必须是大于0的数字。"
+  balance: "&a你的余额：&e{amount} &7{currency}"
+  balance-other: "&e{player} &a的余额：&e{amount} &7{currency}"
+  transfer-success: "&a已向 &e{player} &a转账 &e{amount} &7{currency}&a。"
+  transfer-received: "&a收到来自 &e{player} &a的转账：&e{amount} &7{currency}"
+  transfer-insufficient: "&c余额不足，当前仅有 &e{amount} &7{currency}&c。"
+  transfer-self: "&c不能给自己转账。"
+  admin-give: "&a已给 &e{player} &a发放 &e{amount} &7{currency}&a。"
+  admin-take: "&a已从 &e{player} &a扣除 &e{amount} &7{currency}&a。"
+  admin-set: "&a已将 &e{player} &a的余额设定为 &e{amount} &7{currency}&a。"
+  reloaded: "&a配置已重载。"

@@ -1,0 +1,21 @@
+name: Economy
+version: 1.0.0
+main: nl.tinyaii.economy.EconomyPlugin
+api-version: 1.16
+author: TinyAII
+description: 经济系统 - 账户/转账/排行/EconomyAPI/Vault软对接，零依赖
+website: https://github.com/TinyAII
+softdepend: [Vault]
+
+commands:
+  钱包:
+    description: 经济主命令
+    usage: /钱包 [查看|排行|转账|给|扣|设定|重载]
+
+permissions:
+  economy.use:
+    description: 查询余额/转账/排行
+    default: true
+  economy.admin:
+    description: 管理命令（给/扣/设定/重载）
+    default: op
