@@ -57,6 +57,16 @@ settings:
   transfer-fee-rate: 0.0     # 手续费率（0=免费）
 ```
 
+## PlayerPoints 余额迁移
+
+不再用 PlayerPoints 点券插件？一键把玩家余额搬到 Economy（玩家余额无损转移）。
+
+1. 旧服执行 `/points export` → 生成 `plugins/PlayerPoints/storage.yml`
+2. 将 storage.yml 复制到本插件目录 `plugins/Economy/playerpoints-storage.yml`
+3. 执行 `/钱包 迁移points` 预览 → `/钱包 迁移points 确认` 导入（导入前自动备份 data.yml）
+   - 模式：`migration.mode`（replace=覆盖 / add=累加）
+   - 换算：`migration.point-multiplier`（1 点 = N 金币，默认 1）
+
 ## 安装
 
 1. 下载 `economy-1.0.0.jar` 放入服务器 `plugins/` 目录
