@@ -23,15 +23,18 @@ public class AccountManager {
     public static class Account {
         public final UUID uuid;
         public String name;        // 最后一次进服的名字（离线查询用）
-        private double balance;
+        private double balance;    // 金币（主币）
+        private int points;        // 点券（第二币，整数）
 
-        Account(UUID uuid, String name, double balance) {
+        Account(UUID uuid, String name, double balance, int points) {
             this.uuid = uuid;
             this.name = name;
             this.balance = balance;
+            this.points = points;
         }
 
         public double getBalance() { return balance; }
+        public int getPoints() { return points; }
     }
 
     private final EconomyPlugin plugin;
@@ -58,7 +61,9 @@ public class AccountManager {
                 UUID uuid = UUID.fromString(key);
                 ConfigurationSection s = root.getConfigurationSection(key);
                 if (s == null) continue;
-                Account acc = new Account(uuid, s.getString("name", ""), s.getDouble("balance", 0));
+                double bal = s.contains("balance") ? s.getDouble("balance") : s.getDouble("gold", 0);
+                int pts = s.getInt("points", 0);
+                Account acc = new Account(uuid, s.getString("name", ""), bal, pts);
                 accounts.put(uuid, acc);
             } catch (IllegalArgumentException ignored) {}
         }
@@ -69,7 +74,8 @@ public class AccountManager {
         for (Account acc : accounts.values()) {
             String base = "accounts." + acc.uuid + ".";
             yml.set(base + "name", acc.name);
-            yml.set(base + "balance", round(acc.balance));
+            yml.set(base + "gold", round(acc.getBalance()));
+            yml.set(base + "points", acc.getPoints());
         }
         try {
             if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
@@ -90,7 +96,7 @@ public class AccountManager {
                 return acc;
             }
             double start = plugin.getConfig().getDouble("settings.starting-balance", 100.0);
-            acc = new Account(uuid, name == null ? "" : name, start);
+            acc = new Account(uuid, name == null ? "" : name, start, 0);
             accounts.put(uuid, acc);
             save();
             return acc;
@@ -156,6 +162,44 @@ public class AccountManager {
         }
     }
 
+    // ---------- 点券（第二币） ----------
+
+    public int getPoints(UUID uuid) {
+        Account acc = accounts.get(uuid);
+        return acc == null ? 0 : acc.points;
+    }
+
+    /** 发点券，返回新余额 */
+    public int depositPoints(UUID uuid, int amount) {
+        synchronized (lock) {
+            Account acc = getOrCreateNoSave(uuid);
+            acc.points = Math.max(0, acc.points + amount);
+            save();
+            return acc.points;
+        }
+    }
+
+    /** 扣点券，返回 true=成功 */
+    public boolean withdrawPoints(UUID uuid, int amount) {
+        synchronized (lock) {
+            Account acc = getOrCreateNoSave(uuid);
+            if (acc.points < amount) return false;
+            acc.points -= amount;
+            save();
+            return true;
+        }
+    }
+
+    /** 设定点券余额 */
+    public int setPoints(UUID uuid, int amount) {
+        synchronized (lock) {
+            Account acc = getOrCreateNoSave(uuid);
+            acc.points = Math.max(0, amount);
+            save();
+            return acc.points;
+        }
+    }
+
     /**
      * 转账（原子：扣款+入账同一临界区；手续费可配）。
      * @return 成功=null；失败返回原因 key
@@ -210,7 +254,7 @@ public class AccountManager {
         Account acc = accounts.get(uuid);
         if (acc == null) {
             double start = plugin.getConfig().getDouble("settings.starting-balance", 100.0);
-            acc = new Account(uuid, "", start);
+            acc = new Account(uuid, "", start, 0);
             accounts.put(uuid, acc);
         }
         return acc;
