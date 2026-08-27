@@ -12,6 +12,7 @@ public class EconomyPlugin extends JavaPlugin {
     private AccountManager accountManager;
     private Messages messages;
     private VaultHook vaultHook;
+    private nl.tinyaii.economy.data.ExchangeService exchangeService;
 
     @Override
     public void onEnable() {
@@ -28,6 +29,7 @@ public class EconomyPlugin extends JavaPlugin {
         messages = new Messages(this);
         accountManager = new AccountManager(this);
         accountManager.load();
+        exchangeService = new nl.tinyaii.economy.data.ExchangeService(this);
 
         // 玩家进服自动开户
         Bukkit.getPluginManager().registerEvents(new nl.tinyaii.economy.data.JoinListener(this), this);
@@ -65,5 +67,6 @@ public class EconomyPlugin extends JavaPlugin {
     }
 
     public AccountManager getAccountManager() { return accountManager; }
+    public nl.tinyaii.economy.data.ExchangeService getExchangeService() { return exchangeService; }
     public Messages getMessages() { return messages; }
 }
