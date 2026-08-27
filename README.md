@@ -10,7 +10,9 @@
 - **转账**：玩家间转账原子化处理（扣款+入账同一临界区，杜绝并发双花），手续费率可配（默认免费）
 - **富豪榜**：聊天分页排行，每页条数可配，显示自己的排名
 - **余额保护**：不可为负；上限可配（默认不封顶）；金额两位小数精度
-- **EconomyAPI**：静态公开 API（`getBalance / has / deposit / withdraw / setBalance`），其他插件一行代码接入
+- **EconomyAPI**：静态公开 API（金币 + 点券双通道），其他插件一行代码接入
+- **双货币**：金币（主币）+ 点券（第二币，更贵更稀缺）；兑换默认关闭、点券默认无获取途径——由服主生态决定供给防通胀；兑换支持单向/双向/比率/每日上限全配置
+- **管理员神权**：`/钱包 管理` 全套——给/扣金币、给/扣点券、清空、全服活动、新赛季重置，普通玩家用不了
 - **MoneyChangeEvent**：余额变动事件（含变动前后值），供其他插件监听记账
 - **Vault 软对接**：检测到 Vault 自动注册为经济提供方，领地/商店等第三方插件无缝识别；没装 Vault 照常运行
 - **中文命令**：全套 `/钱包` 中文子命令 + Tab 补全
@@ -26,6 +28,11 @@
 | `/钱包 给 <玩家> <金额>` | 发钱 | economy.admin |
 | `/钱包 扣 <玩家> <金额>` | 扣钱 | economy.admin |
 | `/钱包 设定 <玩家> <金额>` | 设定余额 | economy.admin |
+| `/钱包 点券 [玩家]` | 查点券 | economy.use |
+| `/钱包 兑换 购买点券 <金币> / 出售点券 <点券>` | 兑换（默认关闭） | economy.use |
+| `/钱包 管理 给金币/扣金币/给点券/扣点券 <玩家> <数量>` | 神权发/扣双币 | economy.admin |
+| `/钱包 管理 查看 <玩家>/清空 <玩家>` | 神权查看/洗号 | economy.admin |
+| `/钱包 管理 全服金币 <数>/全服点券 <数>/重置全服 确认` | 全服活动/新赛季 | economy.admin |
 | `/钱包 重载` | 重载配置 | economy.admin |
 
 权限默认值：`economy.use` 所有人、`economy.admin` OP。
@@ -51,6 +58,14 @@ public void onMoney(MoneyChangeEvent e) {
 ```yaml
 settings:
   starting-balance: 100.0    # 初始余额
+currency:
+  points-name: "点券"
+  exchange:
+    enabled: false     # 兑换默认关闭
+    mode: both
+    rate-gold-to-points: 100
+    rate-points-to-gold: 90
+    daily-limit-points: 0
   currency-name: "金币"       # 货币名
   max-balance: -1            # 上限（-1 不封顶）
   top-page-size: 10          # 排行每页人数
