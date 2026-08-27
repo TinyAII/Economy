@@ -11,6 +11,23 @@ settings:
   # 转账手续费率（0 = 免费，0.05 = 5%）
   transfer-fee-rate: 0.0
 
+# PlayerPoints 迁移选项
+migration:
+  # 导入模式：replace=覆盖式（点数直接设为余额） / add=累加式（原余额+点数）
+  mode: replace
+  # 点数 → 金币 换算乘数（1 点 = N 金币）
+  point-multiplier: 1.0
+
+# 双货币：点券（第二币）
+currency:
+  points-name: "点券"
+  exchange:
+    enabled: false           # 兑换总开关（默认关，点券默认无获取途径）
+    mode: both               # 单向(gold-to-points) / 反向(points-to-gold) / both(双向)
+    rate-gold-to-points: 100 # 100 金币 → 1 点券
+    rate-points-to-gold: 90  # 1 点券 → 90 金币（点券更贵，回换不划算）
+    daily-limit-points: 0    # 每日兑换上限（0=不限）
+
 messages:
   prefix: "&7[&6钱包&7] &r"
   no-permission: "&c你没有权限这么做。"
@@ -26,3 +43,4 @@ messages:
   admin-take: "&a已从 &e{player} &a扣除 &e{amount} &7{currency}&a。"
   admin-set: "&a已将 &e{player} &a的余额设定为 &e{amount} &7{currency}&a。"
   reloaded: "&a配置已重载。"
+  import-success: "&a迁移完成！成功导入 {count} 个账户，合计 {total} {currency}。"
