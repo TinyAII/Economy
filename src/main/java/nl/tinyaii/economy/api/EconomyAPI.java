@@ -52,4 +52,28 @@ public final class EconomyAPI {
     public static double setBalance(UUID uuid, double amount) {
         return plugin().getAccountManager().setBalance(uuid, Math.max(0, amount));
     }
+
+    // ---------- 点券（第二币） ----------
+
+    /** 查点券余额 */
+    public static int getPoints(UUID uuid) {
+        return plugin().getAccountManager().getPoints(uuid);
+    }
+
+    /** 发点券，返回新余额 */
+    public static int depositPoints(UUID uuid, int amount) {
+        if (amount <= 0) return getPoints(uuid);
+        return plugin().getAccountManager().depositPoints(uuid, amount);
+    }
+
+    /** 扣点券，返回 true=成功（不足 false） */
+    public static boolean withdrawPoints(UUID uuid, int amount) {
+        if (amount <= 0) return true;
+        return plugin().getAccountManager().withdrawPoints(uuid, amount);
+    }
+
+    /** 设定点券余额 */
+    public static int setPoints(UUID uuid, int amount) {
+        return plugin().getAccountManager().setPoints(uuid, Math.max(0, amount));
+    }
 }
